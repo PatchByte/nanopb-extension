@@ -17,3 +17,8 @@ include_directories(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/include/
 add_executable(${PROJECT_NAME} ${NANOPB_EXTENSION_TEST_SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} protobuf-nanopb-static nanopb-extension::nanopb-extension)
+
+add_test(
+    NAME ${PROJECT_NAME}
+    COMMAND $<TARGET_FILE:${PROJECT_NAME}>
+)

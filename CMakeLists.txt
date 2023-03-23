@@ -20,5 +20,6 @@ endif(NOT NANOPB_EXTENSION_AS_VENDOR)
 add_subdirectory("nanopb-extension")
 
 if(NANOPB_EXTENSION_BUILD_TESTS)
+    enable_testing()
     add_subdirectory("nanopb-extension-tests")
 endif(NANOPB_EXTENSION_BUILD_TESTS)
