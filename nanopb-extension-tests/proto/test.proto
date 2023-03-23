@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+message TestStruct
+{
+    optional string testString = 1;
+    repeated int32 testRepeatedInt = 2;
+}
