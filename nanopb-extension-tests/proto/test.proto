@@ -1,7 +1,15 @@
 syntax = "proto2";
 
+message SubStruct
+{
+    required int32 v0 = 1;
+    required int64 v1 = 2;
+    required string v2 = 3;
+}
+
 message TestStruct
 {
     optional string testString = 1;
-    repeated int32 testRepeatedInt = 2;
+    optional SubStruct subStruct = 2;
+    repeated int32 testRepeatedInt = 3;
 }

@@ -6,6 +6,9 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
+PB_BIND(SubStruct, SubStruct, AUTO)
+
+
 PB_BIND(TestStruct, TestStruct, AUTO)
 
 
