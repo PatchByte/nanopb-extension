@@ -2,13 +2,15 @@
 #include "tests.h"
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 #include <test.pb.h>
 
-static std::map<std::string, tests::TestFunction_t*> smTestFunctionMap = 
+static std::unordered_map<std::string, tests::TestFunction_t*> smTestFunctionMap = 
 {
-    { "TestStringNormal", tests::TestStringNormal }
+    { "TestStringNormal", tests::TestStringNormal },
+    { "TestSubmessageNormal", tests::TestSubmessageNormal },
+    { "TestRepeatedNormal", tests::TestRepeatedNormal }
 };
 
 int main()

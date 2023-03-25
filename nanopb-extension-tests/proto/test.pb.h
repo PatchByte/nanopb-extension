@@ -19,7 +19,7 @@ typedef struct _SubStruct {
 typedef struct _TestStruct {
     pb_callback_t testString;
     pb_callback_t subStruct;
-    pb_callback_t testRepeatedInt;
+    pb_callback_t repeatedSubStruct;
 } TestStruct;
 
 
@@ -39,23 +39,24 @@ extern "C" {
 #define SubStruct_v2_tag                         3
 #define TestStruct_testString_tag                1
 #define TestStruct_subStruct_tag                 2
-#define TestStruct_testRepeatedInt_tag           3
+#define TestStruct_repeatedSubStruct_tag         3
 
 /* Struct field encoding specification for nanopb */
 #define SubStruct_FIELDLIST(X, a) \
 X(a, STATIC,   REQUIRED, INT32,    v0,                1) \
 X(a, STATIC,   REQUIRED, INT64,    v1,                2) \
-X(a, CALLBACK, REQUIRED, STRING,   v2,                3)
+X(a, CALLBACK, OPTIONAL, STRING,   v2,                3)
 #define SubStruct_CALLBACK pb_default_field_callback
 #define SubStruct_DEFAULT NULL
 
 #define TestStruct_FIELDLIST(X, a) \
 X(a, CALLBACK, OPTIONAL, STRING,   testString,        1) \
 X(a, CALLBACK, OPTIONAL, MESSAGE,  subStruct,         2) \
-X(a, CALLBACK, REPEATED, INT32,    testRepeatedInt,   3)
+X(a, CALLBACK, REPEATED, MESSAGE,  repeatedSubStruct,   3)
 #define TestStruct_CALLBACK pb_default_field_callback
 #define TestStruct_DEFAULT NULL
 #define TestStruct_subStruct_MSGTYPE SubStruct
+#define TestStruct_repeatedSubStruct_MSGTYPE SubStruct
 
 extern const pb_msgdesc_t SubStruct_msg;
 extern const pb_msgdesc_t TestStruct_msg;

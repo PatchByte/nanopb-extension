@@ -4,12 +4,12 @@ message SubStruct
 {
     required int32 v0 = 1;
     required int64 v1 = 2;
-    required string v2 = 3;
+    optional string v2 = 3;
 }
 
 message TestStruct
 {
     optional string testString = 1;
     optional SubStruct subStruct = 2;
-    repeated int32 testRepeatedInt = 3;
+    repeated SubStruct repeatedSubStruct = 3;
 }
