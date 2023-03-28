@@ -7,7 +7,8 @@ class pb_repeated_array_stream
 {
 public:
     pb_repeated_array_stream():
-        arrayBufferPointer(nullptr)
+        arrayBufferPointer(nullptr),
+        arrayDataTypeMsgDesc(nullptr)
     {}
 
     ~pb_repeated_array_stream()
@@ -15,10 +16,9 @@ public:
     }
     
     template<typename T>
-    pb_repeated_array_stream* OpenStream(std::vector<T*>* stream_vector, const pb_msgdesc_t* stream_data_type_desc)
+    pb_repeated_array_stream* OpenStream(std::vector<T*>* stream_vector)
     {
         arrayBufferPointer = stream_vector;
-        arrayDataTypeMsgDesc = stream_data_type_desc;
 
         cbGetArraySize = [&] () -> size_t {
             std::vector<T*>* vec = (std::vector<T*>*)arrayBufferPointer;
@@ -37,6 +37,12 @@ public:
             return c;
         };
 
+        return this;
+    }
+
+    pb_repeated_array_stream* SetMsgDesc(const pb_msgdesc_t* stream_data_type_desc)
+    {
+        arrayDataTypeMsgDesc = stream_data_type_desc;
         return this;
     }
 
@@ -62,9 +68,9 @@ private:
 };
 
 template<typename T>
-inline pb_repeated_array_stream* pb_create_repeated_array_stream(std::vector<T*>* vec, const pb_msgdesc_t* desc)
+inline pb_repeated_array_stream* pb_create_repeated_array_stream(std::vector<T*>* vec)
 {
-    return (new pb_repeated_array_stream())->OpenStream(vec, desc);
+    return (new pb_repeated_array_stream())->OpenStream(vec);
 }
 
 inline bool pb_destroy_repeated_array_stream(pb_repeated_array_stream* arrayStream)
@@ -74,10 +80,17 @@ inline bool pb_destroy_repeated_array_stream(pb_repeated_array_stream* arrayStre
 }
 
 typedef std::function<void(void* buffer)> pb_repeated_extension_setup_decode_callback;
+
+typedef std::function<bool(pb_ostream_t *stream, const pb_field_t *field, size_t indexNumber, void* indexBuffer)> pb_repeated_extension_iterator_for_encode_callback;
+typedef std::function<bool(pb_istream_t *stream, const pb_field_t *field, size_t indexNumber, void* indexBuffer)> pb_repeated_extension_iterator_for_decode_callback;
+
 typedef std::function<void(size_t indexNumber, void* indexBuffer)> pb_repeated_extension_iterator_callback;
 
-bool pb_create_repeated_encode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream);
-bool pb_create_repeated_decode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream, pb_repeated_extension_setup_decode_callback field_setup_callback);
+bool pb_create_submessage_repeated_encode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream);
+bool pb_create_submessage_repeated_decode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream, pb_repeated_extension_setup_decode_callback field_setup_callback);
+
+bool pb_create_custom_repeated_encode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream, pb_repeated_extension_iterator_for_encode_callback field_iterator_encode_callback);
+bool pb_create_custom_repeated_decode_callback(pb_callback_t* field, pb_repeated_array_stream* field_stream, pb_repeated_extension_iterator_for_decode_callback field_iterator_decode_callback);
 
 bool pb_iterate_repeated_callback(pb_callback_t* field, pb_repeated_extension_iterator_callback field_iteration_callback);
 

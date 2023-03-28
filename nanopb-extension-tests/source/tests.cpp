@@ -147,7 +147,7 @@ bool tests::TestRepeatedNormal()
         arrayVector.push_back(s);
     }
 
-    pb_create_repeated_encode_callback(&testStruct.repeatedSubStruct, pb_create_repeated_array_stream(&arrayVector, SubStruct_fields));
+    pb_create_submessage_repeated_encode_callback(&testStruct.repeatedSubStruct, pb_create_repeated_array_stream(&arrayVector)->SetMsgDesc(SubStruct_fields));
     pb_ostream_t outputStream = pb_ostream_from_buffer(testStructData, sizeof(testStructData));
     if(!pb_encode(&outputStream, TestStruct_fields, &testStruct))
     {
@@ -177,7 +177,7 @@ bool tests::TestRepeatedNormal()
     arrayVector.clear();
     memset(&testStruct, 0, sizeof(testStruct));
 
-    pb_create_repeated_decode_callback(&testStruct.repeatedSubStruct, pb_create_repeated_array_stream(&arrayVector, SubStruct_fields), [] (void* _structureBuffer) {
+    pb_create_submessage_repeated_decode_callback(&testStruct.repeatedSubStruct, pb_create_repeated_array_stream(&arrayVector)->SetMsgDesc(SubStruct_fields), [] (void* _structureBuffer) {
         SubStruct* s = (SubStruct*)_structureBuffer;
 
         s->v0 = 0;
@@ -206,6 +206,45 @@ bool tests::TestRepeatedNormal()
     });
 
     pb_destroy_repeated_decode_callback(&testStruct.repeatedSubStruct);
+
+    return true;
+}
+
+bool tests::TestRepeatedCustom()
+{
+    TestStruct testStruct = { 0 };
+    pb_byte_t testStructData[512] = { 0 };
+    std::vector<uint64_t*> arrayVector = {  };
+
+    for(int i = 0; i < 10; i++)
+    {
+        arrayVector.push_back(new uint64_t( i ));
+    }
+
+    pb_create_custom_repeated_encode_callback(&testStruct.repeatedInt64, pb_create_repeated_array_stream(&arrayVector), [] (pb_ostream_t *stream, const pb_field_t *field, size_t indexNumber, void* indexBuffer) -> bool {
+        uint64_t v = *(uint64_t*)indexBuffer;
+        return  pb_encode_varint(stream, v);
+    });
+
+    pb_ostream_t outputStream = pb_ostream_from_buffer(testStructData, sizeof(testStructData));
+    if(!pb_encode(&outputStream, TestStruct_fields, &testStruct))
+    {
+        return false;
+    }
+
+    std::cout << "TestRepeatedCustom encoded: " << utils::buffer_to_hex_string(testStructData, outputStream.bytes_written) << std::endl;
+
+    if(utils::buffer_to_hex_string(testStructData, outputStream.bytes_written) != "2000200120022003200420052006200720082009")
+    {
+        return false;
+    }
+
+    pb_iterate_repeated_callback(&testStruct.repeatedInt64, [] (size_t bufferIndex, void* bufferData) {
+        delete bufferData;
+    });
+    pb_destroy_repeated_encode_callback(&testStruct.repeatedInt64);
+
+     // @todo
 
     return true;
 }

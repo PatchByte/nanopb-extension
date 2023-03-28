@@ -20,6 +20,7 @@ typedef struct _TestStruct {
     pb_callback_t testString;
     pb_callback_t subStruct;
     pb_callback_t repeatedSubStruct;
+    pb_callback_t repeatedInt64;
     pb_callback_t testBytes;
 } TestStruct;
 
@@ -30,9 +31,9 @@ extern "C" {
 
 /* Initializer values for message structs */
 #define SubStruct_init_default                   {0, 0, {{NULL}, NULL}}
-#define TestStruct_init_default                  {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define TestStruct_init_default                  {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 #define SubStruct_init_zero                      {0, 0, {{NULL}, NULL}}
-#define TestStruct_init_zero                     {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
+#define TestStruct_init_zero                     {{{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}, {{NULL}, NULL}}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define SubStruct_v0_tag                         1
@@ -41,7 +42,8 @@ extern "C" {
 #define TestStruct_testString_tag                1
 #define TestStruct_subStruct_tag                 2
 #define TestStruct_repeatedSubStruct_tag         3
-#define TestStruct_testBytes_tag                 4
+#define TestStruct_repeatedInt64_tag             4
+#define TestStruct_testBytes_tag                 5
 
 /* Struct field encoding specification for nanopb */
 #define SubStruct_FIELDLIST(X, a) \
@@ -55,7 +57,8 @@ X(a, CALLBACK, OPTIONAL, STRING,   v2,                3)
 X(a, CALLBACK, OPTIONAL, STRING,   testString,        1) \
 X(a, CALLBACK, OPTIONAL, MESSAGE,  subStruct,         2) \
 X(a, CALLBACK, REPEATED, MESSAGE,  repeatedSubStruct,   3) \
-X(a, CALLBACK, OPTIONAL, BYTES,    testBytes,         4)
+X(a, CALLBACK, REPEATED, INT64,    repeatedInt64,     4) \
+X(a, CALLBACK, OPTIONAL, BYTES,    testBytes,         5)
 #define TestStruct_CALLBACK pb_default_field_callback
 #define TestStruct_DEFAULT NULL
 #define TestStruct_subStruct_MSGTYPE SubStruct
