@@ -8,6 +8,7 @@
 #include <nanopb-extension/pb_string_extension.h>
 #include <nanopb-extension/pb_submessage_extension.h>
 #include <nanopb-extension/pb_repeated_extension.h>
+#include <nanopb-extension/pb_bytes_extension.h>
 
 #include <string>
 
@@ -205,6 +206,49 @@ bool tests::TestRepeatedNormal()
     });
 
     pb_destroy_repeated_decode_callback(&testStruct.repeatedSubStruct);
+
+    return true;
+}
+
+bool tests::TestBytesNormal()
+{
+
+    TestStruct testStruct = { 0 };
+    pb_byte_t testStructData[128] = { 0 };
+    pb_bytes_type testStructVector = { 0xde, 0xad, 0xbe, 0xef };
+
+    pb_create_bytes_encode_callback_and_set(&testStruct.testBytes, testStructVector);
+
+    pb_ostream_t outputStream = pb_ostream_from_buffer(testStructData, sizeof(testStructData));
+    if(!pb_encode(&outputStream, TestStruct_fields, &testStruct))
+    {
+        return false;
+    }
+
+    pb_destroy_bytes_encode_callback(&testStruct.testBytes);
+
+    std::cout << "TestBytesNormal encoded: " << utils::buffer_to_hex_string(testStructData, outputStream.bytes_written) << std::endl;
+
+    memset(&testStruct, 0, sizeof(testStruct));
+
+    pb_create_bytes_decode_callback(&testStruct.testBytes);
+
+    pb_istream_t inputStream = pb_istream_from_buffer(testStructData, outputStream.bytes_written);
+    
+    if(!pb_decode(&inputStream, TestStruct_fields, &testStruct))
+    {
+        return false;
+    }
+
+    pb_bytes_type decodedBytesValue = pb_destroy_bytes_decode_callback_and_get(&testStruct.testBytes);
+
+    for(size_t i = 0; i < decodedBytesValue.size(); i++)
+    {
+        if(decodedBytesValue[i] != testStructVector[i])
+        {
+            return false;
+        }
+    }
 
     return true;
 }

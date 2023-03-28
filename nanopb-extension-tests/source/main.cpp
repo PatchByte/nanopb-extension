@@ -10,7 +10,8 @@ static std::unordered_map<std::string, tests::TestFunction_t*> smTestFunctionMap
 {
     { "TestStringNormal", tests::TestStringNormal },
     { "TestSubmessageNormal", tests::TestSubmessageNormal },
-    { "TestRepeatedNormal", tests::TestRepeatedNormal }
+    { "TestRepeatedNormal", tests::TestRepeatedNormal },
+    { "TestBytesNormal", tests::TestBytesNormal }
 };
 
 int main()

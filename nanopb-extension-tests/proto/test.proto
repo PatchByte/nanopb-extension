@@ -12,4 +12,5 @@ message TestStruct
     optional string testString = 1;
     optional SubStruct subStruct = 2;
     repeated SubStruct repeatedSubStruct = 3;
+    optional bytes testBytes = 4;
 }
